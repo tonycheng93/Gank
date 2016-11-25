@@ -38,4 +38,5 @@ dependencies {
     compile 'com.youth.banner:banner:1.4.4'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
+    compile 'com.daimajia.numberprogressbar:library:1.2'
 }

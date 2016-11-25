@@ -3,6 +3,8 @@ package com.sky.gank.mvp.view;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -13,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.sky.gank.R;
-import com.sky.gank.WebActivity;
 import com.sky.gank.entity.GankEntity;
 import com.sky.gank.mvp.GankAdapter;
 import com.sky.gank.mvp.presenter.IGankPresenter;
@@ -42,16 +43,15 @@ public class GankListFragment extends Fragment implements IGankView,
     private List<GankEntity> mData;
     private int mCount = 10;
     private int mPage = 1;
-
-    private int mType = GankFragment.GANK_ANDROID;
+    private String mType = GankFragment.GANK_ANDROID;
 
     public GankListFragment() {
         // Required empty public constructor
     }
 
-    public static GankListFragment newInstance(int type) {
+    public static GankListFragment newInstance(String type) {
         Bundle args = new Bundle();
-        args.putInt("type", type);
+        args.putString("type", type);
         GankListFragment fragment = new GankListFragment();
         fragment.setArguments(args);
         return fragment;
@@ -61,14 +61,14 @@ public class GankListFragment extends Fragment implements IGankView,
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mPresenter = new GankPresenterImpl(this);
-        mType = getArguments().getInt("type");
+        mType = getArguments().getString("type");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_android, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_gank_list, container, false);
         ButterKnife.bind(this, rootView);
 
         mRefreshLayout.setColorSchemeResources(R.color.colorPrimaryDark);
@@ -96,12 +96,22 @@ public class GankListFragment extends Fragment implements IGankView,
     }
 
     @Override
-    public void addGank(List<GankEntity> androidList) {
+    public void addGank(List<GankEntity> gankList) {
+        mAdapter.isShowFooter(true);
         if (mData == null) {
             mData = new ArrayList<>();
         }
-        mData.addAll(androidList);
-        mAdapter.setData(mData);
+        mData.addAll(gankList);
+        if (mPage == 1) {
+            mAdapter.setData(mData);
+        } else {
+            //如果没有更多数据了，则隐藏footer布局
+            if (gankList == null && gankList.size() == 0) {
+                mAdapter.isShowFooter(false);
+            }
+            mAdapter.notifyDataSetChanged();
+        }
+        mPage += 1;
     }
 
     @Override
@@ -116,13 +126,24 @@ public class GankListFragment extends Fragment implements IGankView,
 
     @Override
     public void onRefresh() {
-        mPresenter.loadAndroidList(mCount, mPage);
+        mPage = 1;
+        if (mData != null) {
+            mData.clear();
+        }
+        mPresenter.loadGankList(mType, mCount, mPage);
     }
 
     @Override
     public void onItemClick(View view, int position) {
-        String url = mData.get(position).getUrl();
-        startActivity(WebActivity.newIntent(getActivity(), url));
+        if (mData.size() <= 0) {
+            return;
+        }
+        GankEntity gankEntity = mAdapter.getItem(position);
+        View transitionView = view.findViewById(R.id.gank_item_layout);
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                getActivity(), transitionView, "share");
+        ActivityCompat.startActivity(getActivity(), GankDetailActivity.newIntent(getActivity(), gankEntity),
+                options.toBundle());
     }
 
     private RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
@@ -135,7 +156,7 @@ public class GankListFragment extends Fragment implements IGankView,
             if (newState == RecyclerView.SCROLL_STATE_IDLE
                     && lastVisibleItem + 1 == mAdapter.getItemCount()) {
                 //加载更多
-                mPresenter.loadAndroidList(mCount, ++mPage);
+                mPresenter.loadGankList(mType, mCount, ++mPage);
             }
         }
 

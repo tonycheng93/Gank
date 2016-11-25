@@ -4,7 +4,12 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     
-    <color name="item_trans_shade">#a3181818</color>
+    <color name="item_trans_shade">#99000000</color>
 
-    <color name="indicator_color">#FFFF8c</color>
+    <!--指示器颜色-->
+    <color name="indicator_color">#FFFFFF8c</color>
+    <!--无图片时Item背景色-->
+    <color name="no_image_item_color">#FFFFFF</color>
+    <!--ToolBar的颜色-->
+    <color name="toolbar_color">#FF4D6992</color>
 </resources>

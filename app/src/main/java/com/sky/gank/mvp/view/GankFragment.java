@@ -24,9 +24,9 @@ import butterknife.ButterKnife;
  */
 public class GankFragment extends Fragment {
 
-    public static final int GANK_ANDROID = 0;
-    public static final int GANK_IOS = 1;
-    public static final int GANK_FRONT_END = 2;
+    public static final String GANK_ANDROID = "Android";
+    public static final String GANK_IOS = "iOS";
+    public static final String GANK_FRONT_END = "前端";
 
     @BindView(R.id.tab_layout)
     TabLayout mTabLayout;
@@ -61,7 +61,7 @@ public class GankFragment extends Fragment {
         adapter.addFragment(GankListFragment.newInstance(GANK_ANDROID), getString(R.string.category_android));
         adapter.addFragment(GankListFragment.newInstance(GANK_IOS), getString(R.string.category_ios));
         adapter.addFragment(GankListFragment.newInstance(GANK_FRONT_END), getString(R.string.category_front_end));
-        mViewPager.setAdapter(adapter);
+        viewPager.setAdapter(adapter);
     }
 
     public static class PagerAdapter extends FragmentPagerAdapter {

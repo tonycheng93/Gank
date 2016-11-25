@@ -13,7 +13,7 @@ import java.util.List;
  */
 
 public class GankPresenterImpl implements IGankPresenter,
-        GankModelImpl.OnLoadAndroidListListener {
+        GankModelImpl.OnloadGankListListener {
 
     private IGankView mAndroidView;
     private IGankModel mAndroidModel;
@@ -24,9 +24,9 @@ public class GankPresenterImpl implements IGankPresenter,
     }
 
     @Override
-    public void loadAndroidList(int count, int page) {
+    public void loadGankList(String category,int count, int page) {
         mAndroidView.showLoading();
-        mAndroidModel.loadAndroidList(count, page, this);
+        mAndroidModel.loadGankList(category,count, page, this);
     }
 
     @Override

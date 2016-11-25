@@ -8,6 +8,6 @@ import com.sky.gank.mvp.model.impl.GankModelImpl;
 
 public interface IGankModel {
 
-    void loadAndroidList(int count, int page,
-                         GankModelImpl.OnLoadAndroidListListener listener);
+    void loadGankList(String category,int count, int page,
+                         GankModelImpl.OnloadGankListListener listener);
 }

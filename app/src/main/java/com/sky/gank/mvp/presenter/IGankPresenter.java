@@ -6,5 +6,5 @@ package com.sky.gank.mvp.presenter;
 
 public interface IGankPresenter {
 
-    void loadAndroidList(int count, int page);
+    void loadGankList(String category, int count, int page);
 }

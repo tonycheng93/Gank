@@ -49,10 +49,10 @@ public class GankAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == TYPE_ITEM) {
             View rootView = LayoutInflater.from(parent.getContext()).inflate(
-                    R.layout.item_android, parent, false);
-            return new AndroidViewHolder(rootView);
+                    R.layout.item_gank, parent, false);
+            return new GankViewHolder(rootView);
         } else {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_footer, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_footer, null);
             view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT));
             return new FooterViewViewHolder(view);
@@ -61,25 +61,25 @@ public class GankAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
-        final GankEntity gankEntity = mData.get(position);
+        if (holder instanceof GankViewHolder) {
+            GankEntity gankEntity = mData.get(position);
+            if (gankEntity == null) {
+                return;
+            }
 
-        if (gankEntity == null) {
-            return;
-        }
+            String desc = gankEntity.getDesc();
+            String time = gankEntity.getPublishedAt().split("T")[0];
+            String who = gankEntity.getWho();
+            String url = gankEntity.getUrl();
+            List<String> imageUrl = null;
 
-        String desc = gankEntity.getDesc();
-        String time = gankEntity.getPublishedAt().split("T")[0];
-        String who = gankEntity.getWho();
-        String url = gankEntity.getUrl();
-        List<String> imageUrl = null;
+            if (gankEntity.getImages() != null && gankEntity.getImages().size() > 0) {
+                imageUrl = gankEntity.getImages();
+            }
 
-        if (gankEntity.getImages() != null && gankEntity.getImages().size() > 0) {
-            imageUrl = gankEntity.getImages();
-        }
+            if (imageUrl != null && imageUrl.size() > 0) {
 
-        if (imageUrl != null && imageUrl.size() > 0) {
-
-            ImageLoader.displayAsGif(mContext, imageUrl.get(0), ((AndroidViewHolder) holder).mImageView);
+                ImageLoader.display(mContext, imageUrl.get(0), ((GankViewHolder) holder).mImageView);
 
 //            Glide.with(mContext)
 //                    .load(imageUrl.get(0))
@@ -108,24 +108,26 @@ public class GankAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 //                            }
 //                        }
 //                    });
-        } else {
-            ((AndroidViewHolder) holder).mImageView.setVisibility(View.GONE);
-        }
-
-        if (!TextUtils.isEmpty(desc)) {
-            ((AndroidViewHolder) holder).mTitleTextView.setText(desc);
-        }
-
-        if (gankEntity.getWho() == null) {
-            ((AndroidViewHolder) holder).mAuthorTextView.setText("");
-        } else {
-            if (!TextUtils.isEmpty(who)) {
-                ((AndroidViewHolder) holder).mAuthorTextView.setText("via " + who);
+            } else {
+                ((GankViewHolder) holder).mImageView.setVisibility(View.GONE);
+                ((GankViewHolder)holder).mLinearLayout.setBackgroundResource(R.color.no_image_item_color);
             }
-        }
 
-        if (!TextUtils.isEmpty(time)) {
-            ((AndroidViewHolder) holder).mTimeTextView.setText(time);
+            if (!TextUtils.isEmpty(desc)) {
+                ((GankViewHolder) holder).mTitleTextView.setText(desc);
+            }
+
+            if (gankEntity.getWho() == null) {
+                ((GankViewHolder) holder).mAuthorTextView.setText("");
+            } else {
+                if (!TextUtils.isEmpty(who)) {
+                    ((GankViewHolder) holder).mAuthorTextView.setText("via " + who);
+                }
+            }
+
+            if (!TextUtils.isEmpty(time)) {
+                ((GankViewHolder) holder).mTimeTextView.setText(time);
+            }
         }
     }
 
@@ -136,6 +138,10 @@ public class GankAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             return begin;
         }
         return mData.size() + begin;
+    }
+
+    public GankEntity getItem(int position) {
+        return mData == null ? null : mData.get(position);
     }
 
     @Override
@@ -151,7 +157,7 @@ public class GankAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
-    public class AndroidViewHolder extends RecyclerView.ViewHolder
+    public class GankViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
 
         @BindView(R.id.ll_root)
@@ -165,7 +171,7 @@ public class GankAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         @BindView(R.id.time_text_view)
         TextView mTimeTextView;
 
-        public AndroidViewHolder(View itemView) {
+        public GankViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(this);
@@ -198,7 +204,7 @@ public class GankAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return mShowFooter;
     }
 
-    public void setShowFooter(boolean showFooter) {
+    public void isShowFooter(boolean showFooter) {
         mShowFooter = showFooter;
     }
 }

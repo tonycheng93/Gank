@@ -5,4 +5,6 @@
     <color name="colorAccent">#FF4081</color>
     
     <color name="item_trans_shade">#a3181818</color>
+
+    <color name="indicator_color">#FFFF8c</color>
 </resources>

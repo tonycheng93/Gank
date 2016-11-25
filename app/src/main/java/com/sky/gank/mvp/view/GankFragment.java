@@ -2,23 +2,16 @@ package com.sky.gank.mvp.view;
 
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.sky.gank.mvp.GankAdapter;
-import com.sky.gank.mvp.presenter.IGankPresenter;
-import com.sky.gank.mvp.presenter.impl.GankPresenterImpl;
 import com.sky.gank.R;
-import com.sky.gank.WebActivity;
-import com.sky.gank.entity.GankEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,120 +22,76 @@ import butterknife.ButterKnife;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class GankFragment extends Fragment implements IGankView,
-        SwipeRefreshLayout.OnRefreshListener, GankAdapter.OnItemClickListener {
+public class GankFragment extends Fragment {
 
-    @BindView(R.id.swipe_refresh_widget)
-    SwipeRefreshLayout mRefreshLayout;
-    @BindView(R.id.recycle_view)
-    RecyclerView mRecyclerView;
-    private LinearLayoutManager mLayoutManager;
-    private GankAdapter mAdapter;
+    public static final int GANK_ANDROID = 0;
+    public static final int GANK_IOS = 1;
+    public static final int GANK_FRONT_END = 2;
 
-    private IGankPresenter mPresenter;
-    private List<GankEntity> mData;
-    private int mCount = 10;
-    private int mPage = 1;
+    @BindView(R.id.tab_layout)
+    TabLayout mTabLayout;
+    @BindView(R.id.viewpager)
+    ViewPager mViewPager;
 
     public GankFragment() {
         // Required empty public constructor
     }
 
-    public static GankFragment newInstance(String type) {
-        Bundle args = new Bundle();
-        args.putString("type", type);
-        GankFragment fragment = new GankFragment();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mPresenter = new GankPresenterImpl(this);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_android, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_gank, null);
         ButterKnife.bind(this, rootView);
 
-        mRefreshLayout.setColorSchemeResources(R.color.colorPrimaryDark);
-        mRefreshLayout.setOnRefreshListener(this);
+        mViewPager.setOffscreenPageLimit(3);
+        setupViewPager(mViewPager);
 
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mTabLayout.addTab(mTabLayout.newTab().setText(R.string.category_android));
+        mTabLayout.addTab(mTabLayout.newTab().setText(R.string.category_ios));
+        mTabLayout.addTab(mTabLayout.newTab().setText(R.string.category_front_end));
 
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.addOnScrollListener(mOnScrollListener);
-
-        mAdapter = new GankAdapter(getActivity());
-        mAdapter.setOnItemClickListener(this);
-        mRecyclerView.setAdapter(mAdapter);
-
-        onRefresh();
-
+        mTabLayout.setupWithViewPager(mViewPager);
         return rootView;
     }
 
-    @Override
-    public void showLoading() {
-        mRefreshLayout.setRefreshing(true);
+    private void setupViewPager(ViewPager viewPager) {
+        PagerAdapter adapter = new PagerAdapter(getChildFragmentManager());
+        adapter.addFragment(GankListFragment.newInstance(GANK_ANDROID), getString(R.string.category_android));
+        adapter.addFragment(GankListFragment.newInstance(GANK_IOS), getString(R.string.category_ios));
+        adapter.addFragment(GankListFragment.newInstance(GANK_FRONT_END), getString(R.string.category_front_end));
+        mViewPager.setAdapter(adapter);
     }
 
-    @Override
-    public void addGank(List<GankEntity> androidList) {
-        if (mData == null) {
-            mData = new ArrayList<>();
+    public static class PagerAdapter extends FragmentPagerAdapter {
+        private final List<Fragment> mFragments = new ArrayList<>();
+        private final List<String> mFragmentTitles = new ArrayList<>();
+
+        public PagerAdapter(FragmentManager fm) {
+            super(fm);
         }
-        mData.addAll(androidList);
-        mAdapter.setData(mData);
-    }
 
-    @Override
-    public void hideLoading() {
-        mRefreshLayout.setRefreshing(false);
-    }
+        public void addFragment(Fragment fragment, String title) {
+            mFragments.add(fragment);
+            mFragmentTitles.add(title);
+        }
 
-    @Override
-    public void showLoadFailMsg() {
-        mRefreshLayout.setRefreshing(false);
-    }
-
-    @Override
-    public void onRefresh() {
-        mPresenter.loadAndroidList(mCount, mPage);
-    }
-
-    @Override
-    public void onItemClick(View view, int position) {
-        String url = mData.get(position).getUrl();
-        startActivity(WebActivity.newIntent(getActivity(),url));
-    }
-
-    private RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
-
-        private int lastVisibleItem;
 
         @Override
-        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-            super.onScrollStateChanged(recyclerView, newState);
-            if (newState == RecyclerView.SCROLL_STATE_IDLE
-                    && lastVisibleItem + 1 == mAdapter.getItemCount()) {
-                //加载更多
-                Toast.makeText(getActivity(), "加载更多...", Toast.LENGTH_SHORT).show();
-                mPresenter.loadAndroidList(mCount, ++mPage);
-            }
+        public Fragment getItem(int position) {
+            return mFragments.get(position);
         }
 
         @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
-            lastVisibleItem = mLayoutManager.findLastVisibleItemPosition();
+        public int getCount() {
+            return mFragments.size();
         }
-    };
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mFragmentTitles.get(position);
+        }
+    }
 
 }

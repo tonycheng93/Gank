@@ -3,4 +3,8 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="category_android">Android</string>
+    <string name="category_ios">iOS</string>
+    <string name="category_front_end">前端</string>
 </resources>

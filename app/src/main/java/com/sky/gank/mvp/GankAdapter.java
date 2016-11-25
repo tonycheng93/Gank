@@ -1,4 +1,4 @@
-package com.sky.gank.Android;
+package com.sky.gank.mvp;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -24,14 +24,18 @@ import butterknife.ButterKnife;
  * Created by tonycheng on 2016/11/24.
  */
 
-public class AndroidAdapter extends RecyclerView.Adapter<AndroidAdapter.AndroidViewHolder> {
+public class GankAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private static final int TYPE_ITEM = 0;
+    private static final int TYPE_FOOTER = 1;
 
     private Context mContext;
     private List<GankEntity> mData;
+    private boolean mShowFooter = true;
 
     private int mScreenWidth;
 
-    public AndroidAdapter(Context context) {
+    public GankAdapter(Context context) {
         mContext = context;
         mScreenWidth = DensityUtil.getWidthInPx(mContext);
     }
@@ -42,14 +46,21 @@ public class AndroidAdapter extends RecyclerView.Adapter<AndroidAdapter.AndroidV
     }
 
     @Override
-    public AndroidViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View rootView = LayoutInflater.from(parent.getContext()).inflate(
-                R.layout.item_android, parent, false);
-        return new AndroidViewHolder(rootView);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == TYPE_ITEM) {
+            View rootView = LayoutInflater.from(parent.getContext()).inflate(
+                    R.layout.item_android, parent, false);
+            return new AndroidViewHolder(rootView);
+        } else {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_footer, parent, false);
+            view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT));
+            return new FooterViewViewHolder(view);
+        }
     }
 
     @Override
-    public void onBindViewHolder(final AndroidViewHolder holder, int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         final GankEntity gankEntity = mData.get(position);
 
         if (gankEntity == null) {
@@ -68,7 +79,7 @@ public class AndroidAdapter extends RecyclerView.Adapter<AndroidAdapter.AndroidV
 
         if (imageUrl != null && imageUrl.size() > 0) {
 
-            ImageLoader.displayAsGif(mContext, imageUrl.get(0), holder.mImageView);
+            ImageLoader.displayAsGif(mContext, imageUrl.get(0), ((AndroidViewHolder) holder).mImageView);
 
 //            Glide.with(mContext)
 //                    .load(imageUrl.get(0))
@@ -98,29 +109,46 @@ public class AndroidAdapter extends RecyclerView.Adapter<AndroidAdapter.AndroidV
 //                        }
 //                    });
         } else {
-            holder.mImageView.setVisibility(View.GONE);
+            ((AndroidViewHolder) holder).mImageView.setVisibility(View.GONE);
         }
 
         if (!TextUtils.isEmpty(desc)) {
-            holder.mTitleTextView.setText(desc);
+            ((AndroidViewHolder) holder).mTitleTextView.setText(desc);
         }
 
         if (gankEntity.getWho() == null) {
-            holder.mAuthorTextView.setText("");
+            ((AndroidViewHolder) holder).mAuthorTextView.setText("");
         } else {
             if (!TextUtils.isEmpty(who)) {
-                holder.mAuthorTextView.setText("via " + who);
+                ((AndroidViewHolder) holder).mAuthorTextView.setText("via " + who);
             }
         }
 
         if (!TextUtils.isEmpty(time)) {
-            holder.mTimeTextView.setText(time);
+            ((AndroidViewHolder) holder).mTimeTextView.setText(time);
         }
     }
 
     @Override
     public int getItemCount() {
-        return mData == null ? 0 : mData.size();
+        int begin = mShowFooter ? 1 : 0;
+        if (mData == null) {
+            return begin;
+        }
+        return mData.size() + begin;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        //最后一个Item设置为FooterView
+        if (!mShowFooter) {
+            return TYPE_ITEM;
+        }
+        if (position + 1 == getItemCount()) {
+            return TYPE_FOOTER;
+        } else {
+            return TYPE_ITEM;
+        }
     }
 
     public class AndroidViewHolder extends RecyclerView.ViewHolder
@@ -149,6 +177,13 @@ public class AndroidAdapter extends RecyclerView.Adapter<AndroidAdapter.AndroidV
         }
     }
 
+    public class FooterViewViewHolder extends RecyclerView.ViewHolder {
+
+        public FooterViewViewHolder(View itemView) {
+            super(itemView);
+        }
+    }
+
     private OnItemClickListener mOnItemClickListener;
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
@@ -157,5 +192,13 @@ public class AndroidAdapter extends RecyclerView.Adapter<AndroidAdapter.AndroidV
 
     public interface OnItemClickListener {
         void onItemClick(View view, int position);
+    }
+
+    public boolean isShowFooter() {
+        return mShowFooter;
+    }
+
+    public void setShowFooter(boolean showFooter) {
+        mShowFooter = showFooter;
     }
 }

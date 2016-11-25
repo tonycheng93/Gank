@@ -1,4 +1,4 @@
-package com.sky.gank.Android.view;
+package com.sky.gank.mvp.view;
 
 import com.sky.gank.entity.GankEntity;
 
@@ -8,11 +8,11 @@ import java.util.List;
  * Created by tonycheng on 2016/11/24.
  */
 
-public interface IAndroidView {
+public interface IGankView {
 
     void showLoading();
 
-    void addAndroid(List<GankEntity> androidList);
+    void addGank(List<GankEntity> gankList);
 
     void hideLoading();
 

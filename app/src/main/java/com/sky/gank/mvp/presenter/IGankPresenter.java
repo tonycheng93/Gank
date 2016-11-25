@@ -1,10 +1,10 @@
-package com.sky.gank.Android.presenter;
+package com.sky.gank.mvp.presenter;
 
 /**
  * Created by tonycheng on 2016/11/24.
  */
 
-public interface IAndroidPresenter {
+public interface IGankPresenter {
 
     void loadAndroidList(int count, int page);
 }

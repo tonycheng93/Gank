@@ -1,4 +1,4 @@
-package com.sky.gank.Android.view;
+package com.sky.gank.mvp.view;
 
 
 import android.os.Bundle;
@@ -13,9 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.sky.gank.Android.AndroidAdapter;
-import com.sky.gank.Android.presenter.IAndroidPresenter;
-import com.sky.gank.Android.presenter.impl.AndroidPresenterImpl;
+import com.sky.gank.mvp.GankAdapter;
+import com.sky.gank.mvp.presenter.IGankPresenter;
+import com.sky.gank.mvp.presenter.impl.GankPresenterImpl;
 import com.sky.gank.R;
 import com.sky.gank.WebActivity;
 import com.sky.gank.entity.GankEntity;
@@ -29,29 +29,29 @@ import butterknife.ButterKnife;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AndroidFragment extends Fragment implements IAndroidView,
-        SwipeRefreshLayout.OnRefreshListener, AndroidAdapter.OnItemClickListener {
+public class GankFragment extends Fragment implements IGankView,
+        SwipeRefreshLayout.OnRefreshListener, GankAdapter.OnItemClickListener {
 
     @BindView(R.id.swipe_refresh_widget)
     SwipeRefreshLayout mRefreshLayout;
     @BindView(R.id.recycle_view)
     RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
-    private AndroidAdapter mAdapter;
+    private GankAdapter mAdapter;
 
-    private IAndroidPresenter mPresenter;
+    private IGankPresenter mPresenter;
     private List<GankEntity> mData;
     private int mCount = 10;
     private int mPage = 1;
 
-    public AndroidFragment() {
+    public GankFragment() {
         // Required empty public constructor
     }
 
-    public static AndroidFragment newInstance(String type) {
+    public static GankFragment newInstance(String type) {
         Bundle args = new Bundle();
         args.putString("type", type);
-        AndroidFragment fragment = new AndroidFragment();
+        GankFragment fragment = new GankFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -59,7 +59,7 @@ public class AndroidFragment extends Fragment implements IAndroidView,
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mPresenter = new AndroidPresenterImpl(this);
+        mPresenter = new GankPresenterImpl(this);
     }
 
     @Override
@@ -79,7 +79,7 @@ public class AndroidFragment extends Fragment implements IAndroidView,
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.addOnScrollListener(mOnScrollListener);
 
-        mAdapter = new AndroidAdapter(getActivity());
+        mAdapter = new GankAdapter(getActivity());
         mAdapter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(mAdapter);
 
@@ -94,7 +94,7 @@ public class AndroidFragment extends Fragment implements IAndroidView,
     }
 
     @Override
-    public void addAndroid(List<GankEntity> androidList) {
+    public void addGank(List<GankEntity> androidList) {
         if (mData == null) {
             mData = new ArrayList<>();
         }

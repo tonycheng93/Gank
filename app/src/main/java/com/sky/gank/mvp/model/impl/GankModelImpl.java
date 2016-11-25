@@ -1,6 +1,6 @@
-package com.sky.gank.Android.model.impl;
+package com.sky.gank.mvp.model.impl;
 
-import com.sky.gank.Android.model.IAndroidModel;
+import com.sky.gank.mvp.model.IGankModel;
 import com.sky.gank.config.Constant;
 import com.sky.gank.entity.GankEntity;
 import com.sky.gank.http.ApiService;
@@ -18,7 +18,7 @@ import rx.schedulers.Schedulers;
  * Created by tonycheng on 2016/11/24.
  */
 
-public class AndroidModelImpl implements IAndroidModel {
+public class GankModelImpl implements IGankModel {
 
     @Override
     public void loadAndroidList(int count, int page, final OnLoadAndroidListListener listener) {

@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
-import com.sky.gank.Android.view.AndroidFragment;
+import com.sky.gank.mvp.view.GankFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        switch2Fragment(AndroidFragment.newInstance("AndroidFragment"));
+        switch2Fragment(GankFragment.newInstance("GankFragment"));
     }
 
     private void switch2Fragment(Fragment fragment) {

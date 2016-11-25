@@ -5,7 +5,7 @@
              android:layout_height="wrap_content"
              android:layout_width="match_parent">
 
-    <ImageView
+    <com.facebook.drawee.view.SimpleDraweeView
             android:scaleType="centerCrop"
             android:id="@+id/android_image_view"
             android:adjustViewBounds="true"

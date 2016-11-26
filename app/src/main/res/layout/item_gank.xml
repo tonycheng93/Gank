@@ -1,16 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:tools="http://schemas.android.com/tools"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
              android:id="@+id/gank_item_layout"
              android:layout_height="wrap_content"
              android:layout_width="match_parent">
 
-    <com.facebook.drawee.view.SimpleDraweeView
-            android:scaleType="centerCrop"
-            android:id="@+id/android_image_view"
-            android:adjustViewBounds="true"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"/>
+    <!--<com.facebook.drawee.view.SimpleDraweeView-->
+            <!--android:scaleType="centerCrop"-->
+            <!--android:id="@+id/android_image_view"-->
+            <!--android:adjustViewBounds="true"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="300dp"/>-->
+
+    <com.youth.banner.Banner
+        android:id="@+id/banner"
+        app:image_scale_type="center_crop"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"></com.youth.banner.Banner>
 
     <LinearLayout
             android:background="@color/item_trans_shade"

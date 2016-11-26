@@ -1,7 +1,6 @@
 package com.sky.gank.mvp;
 
 import android.content.Context;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -10,10 +9,12 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.sky.gank.R;
 import com.sky.gank.entity.GankEntity;
 import com.sky.gank.utils.DensityUtil;
+import com.sky.gank.utils.ImageLoader;
+import com.youth.banner.Banner;
+import com.youth.banner.BannerConfig;
 
 import java.util.List;
 
@@ -79,8 +80,15 @@ public class GankAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             if (imageUrl != null && imageUrl.size() > 0) {
 
-                Uri uri = Uri.parse(imageUrl.get(0));
-                ((GankViewHolder)holder).mImageView.setImageURI(uri);
+                ((GankViewHolder)holder).mBanner.setImageLoader(new ImageLoader());
+                ((GankViewHolder)holder).mBanner.setImages(imageUrl);
+                ((GankViewHolder)holder).mBanner.setIndicatorGravity(BannerConfig.CENTER);
+                ((GankViewHolder)holder).mBanner.start();
+
+//                Uri uri = Uri.parse(imageUrl.get(0));
+//                ((GankViewHolder)holder).mImageView.setImageURI(uri);
+
+
 //            Glide.with(mContext)
 //                    .load(imageUrl.get(0))
 //                    .asBitmap()
@@ -109,7 +117,8 @@ public class GankAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 //                        }
 //                    });
             } else {
-                ((GankViewHolder) holder).mImageView.setVisibility(View.GONE);
+//                ((GankViewHolder) holder).mImageView.setVisibility(View.GONE);
+                ((GankViewHolder)holder).mBanner.setVisibility(View.GONE);
                 ((GankViewHolder)holder).mLinearLayout.setBackgroundResource(R.color.no_image_item_color);
             }
 
@@ -162,8 +171,9 @@ public class GankAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         @BindView(R.id.ll_root)
         LinearLayout mLinearLayout;
-        @BindView(R.id.android_image_view)
-        SimpleDraweeView mImageView;
+//
+        @BindView(R.id.banner)
+        Banner mBanner;
         @BindView(R.id.title_text_view)
         TextView mTitleTextView;
         @BindView(R.id.author_text_view)

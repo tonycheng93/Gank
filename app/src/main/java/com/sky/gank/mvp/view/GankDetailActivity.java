@@ -3,7 +3,6 @@ package com.sky.gank.mvp.view;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
@@ -17,13 +16,14 @@ import android.widget.ViewSwitcher;
 
 import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.sky.gank.R;
+import com.sky.gank.base.BaseActivity;
 import com.sky.gank.entity.GankEntity;
 import com.sky.gank.utils.Debugger;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class GankDetailActivity extends AppCompatActivity {
+public class GankDetailActivity extends BaseActivity {
 
     public static final String EXTRA_PARAM = "gank";
 
@@ -40,7 +40,7 @@ public class GankDetailActivity extends AppCompatActivity {
     private String mUrl;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gank_detail);
         ButterKnife.bind(this);

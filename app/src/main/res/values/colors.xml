@@ -3,13 +3,14 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    
+
     <color name="item_trans_shade">#99000000</color>
 
     <!--指示器颜色-->
     <color name="indicator_color">#FFFFFF8c</color>
     <!--无图片时Item背景色-->
     <color name="no_image_item_color">#FFFFFF</color>
+    <color name="status_bar_color">#375683</color>
     <!--ToolBar的颜色-->
     <color name="toolbar_color">#FF4D6992</color>
 </resources>

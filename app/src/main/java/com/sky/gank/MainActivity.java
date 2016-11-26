@@ -25,6 +25,7 @@ public class MainActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
+
         switch2Fragment(new GankFragment());
     }
 

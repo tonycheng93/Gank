@@ -39,4 +39,5 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
     compile 'com.daimajia.numberprogressbar:library:1.2'
     compile 'com.youth.banner:banner:1.4.4'
+    compile 'me.drakeet.multitype:multitype:2.2.1'
 }

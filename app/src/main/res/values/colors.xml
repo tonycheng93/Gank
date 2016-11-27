@@ -13,4 +13,6 @@
     <color name="status_bar_color">#375683</color>
     <!--ToolBar的颜色-->
     <color name="toolbar_color">#FF4D6992</color>
+    <color name="banner_indicator_selected_color">@android:color/white</color>
+    <color name="banner_indicator_unselected_color">@android:color/darker_gray</color>
 </resources>

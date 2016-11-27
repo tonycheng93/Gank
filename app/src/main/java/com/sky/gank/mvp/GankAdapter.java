@@ -1,20 +1,18 @@
 package com.sky.gank.mvp;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.sky.gank.R;
 import com.sky.gank.entity.GankEntity;
 import com.sky.gank.utils.ImageLoader;
 import com.youth.banner.Banner;
-import com.youth.banner.BannerConfig;
+import com.youth.banner.Transformer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -26,160 +24,112 @@ import butterknife.ButterKnife;
 
 public class GankAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private Context mContext;
-    private List<GankEntity> mData;
+    private static final int TYPE_PLAIN_TEXT = 0;
+    private static final int TYPE_TEXT_WITH_IAMGES = 1;
+    private static final int TYPE_FOOTER = 2;
 
-    public static enum ITEM_TYPE {
-        VIEW_TYPE_IAMGE,
-        VIEW_TYPE_TEXT,
-        VIEW_TYPE_FOOTER
+    private List<GankEntity> mData;
+    private boolean isShowFooter;
+
+    public GankAdapter() {
+        mData = new ArrayList<>();
     }
 
-    public GankAdapter(List<GankEntity> data) {
-        mData = data;
+    public void setShowFooter(boolean showFooter) {
+        if (isShowFooter == showFooter) {
+            return;
+        }
+        isShowFooter = showFooter;
+        if (showFooter) {
+            notifyItemInserted(getItemCount());
+        } else {
+            notifyItemRemoved(getItemCount() - 1);
+        }
+    }
+
+    public boolean isShowFooter() {
+        return isShowFooter;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-        mContext = parent.getContext();
-        LayoutInflater inflater = LayoutInflater.from(mContext);
-        RecyclerView.ViewHolder holder = null;
-
-        if (viewType == ITEM_TYPE.VIEW_TYPE_TEXT.ordinal()) {
-            View textItemView = inflater.inflate(R.layout.item_gank_with_text, parent, false);
-            holder = new TextViewHolder(textItemView);
+        switch (viewType) {
+            case TYPE_PLAIN_TEXT:
+                View rootTextView = LayoutInflater.from(parent.getContext()).inflate(R.layout
+                        .item_gank_with_text, parent, false);
+                return new TextViewHolder(rootTextView);
+            case TYPE_TEXT_WITH_IAMGES:
+                View rootImageView = LayoutInflater.from(parent.getContext()).inflate(R.layout
+                        .item_gank_with_image, parent, false);
+                return new ImageViewHolder(rootImageView);
+            case TYPE_FOOTER:
+                View rootFooterView = LayoutInflater.from(parent.getContext()).inflate(R.layout
+                        .view_footer, parent, false);
+                return new FooterViewHolder(rootFooterView);
         }
-
-        if (viewType == ITEM_TYPE.VIEW_TYPE_IAMGE.ordinal()) {
-            View imageItemView = inflater.inflate(R.layout.item_gank_with_image, parent, false);
-            holder = new ImageViewHolder(imageItemView);
-        }
-
-        if (viewType == ITEM_TYPE.VIEW_TYPE_FOOTER.ordinal()) {
-            View footerView = inflater.inflate(R.layout.view_footer, parent, false);
-            holder = new FooterViewViewHolder(footerView);
-        }
-        return holder;
+        return null;
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        int type = getItemViewType(position);
 
-        GankEntity gankEntity = mData.get(position);
-
-        if (holder instanceof ImageViewHolder) {
-            if (gankEntity == null) {
-                return;
-            }
-
-            String desc = gankEntity.getDesc();
-            String time = gankEntity.getPublishedAt().split("T")[0];
-            String who = gankEntity.getWho();
-            String url = gankEntity.getUrl();
-            List<String> imageUrl = null;
-
-            if (gankEntity.getImages() != null && gankEntity.getImages().size() > 0) {
-                imageUrl = gankEntity.getImages();
-            }
-
-            if (imageUrl != null && imageUrl.size() > 0) {
-
-                ((ImageViewHolder) holder).mBanner.setImageLoader(new ImageLoader());
-                ((ImageViewHolder) holder).mBanner.setImages(imageUrl);
-                ((ImageViewHolder) holder).mBanner.setIndicatorGravity(BannerConfig.CENTER);
-                ((ImageViewHolder) holder).mBanner.start();
-            }
-
-            if (!TextUtils.isEmpty(desc)) {
-                ((ImageViewHolder) holder).mTitleTextView.setText(desc);
-            }
-
-            if (gankEntity.getWho() == null) {
-                ((ImageViewHolder) holder).mAuthorTextView.setText("");
+        if (type != TYPE_FOOTER) {
+            GankEntity gankEntity = mData.get(position);
+            TextViewHolder textViewHolder = (TextViewHolder) holder;
+            textViewHolder.mTitle.setText(gankEntity.getDesc());
+            if (gankEntity.getWho() != null) {
+                textViewHolder.mAuthor.setText(String.format("via %s", gankEntity.getWho()));
             } else {
-                if (!TextUtils.isEmpty(who)) {
-                    ((ImageViewHolder) holder).mAuthorTextView.setText("via " + who);
-                }
+                textViewHolder.mAuthor.setText("");
             }
+            textViewHolder.mTime.setText(gankEntity.getPublishedAt().split("T")[0]);
 
-            if (!TextUtils.isEmpty(time)) {
-                ((ImageViewHolder) holder).mTimeTextView.setText(time);
+            if (type == TYPE_TEXT_WITH_IAMGES) {
+                ImageViewHolder imageViewHolder = (ImageViewHolder) holder;
+                imageViewHolder.mBanner.setImages(gankEntity.getImages())
+                        .setImageLoader(new ImageLoader())
+                        .setBannerAnimation(Transformer.DepthPage)
+                        .start();
             }
-        }
-
-        if (holder instanceof TextViewHolder) {
-            if (gankEntity == null) {
-                return;
-            }
-
-            ((TextViewHolder) holder).mTitle.setText(gankEntity.getDesc());
-            ((TextViewHolder) holder).mAuthor.setText(gankEntity.getWho());
-            ((TextViewHolder) holder).mTime.setText(gankEntity.getPublishedAt().split("T").toString());
         }
     }
 
     @Override
     public int getItemCount() {
-        int begin = mShowFooter ? 1 : 0;
-        if (mData == null) {
-            return begin;
-        }
-        return mData.size() + begin;
-    }
-
-    public GankEntity getItem(int position) {
-        return mData == null ? null : mData.get(position);
+        return mData.size() + (isShowFooter ? 1 : 0);
     }
 
     @Override
     public int getItemViewType(int position) {
-//        //最后一个Item设置为FooterView
-//        if (!mShowFooter) {
-//            return TYPE_FOOTER;
-//        }
-        if (position + 1 == getItemCount()) {
+        if (isShowFooter && position == getItemCount() - 1) {
             return TYPE_FOOTER;
         }
-
         GankEntity gankEntity = mData.get(position);
-
-        if (gankEntity.getImages() != null && gankEntity.getImages().size() > 0) {
-            return TYPE_IMAGE;
+        if (gankEntity.getImages() == null || gankEntity.getImages().size() == 0) {
+            return TYPE_PLAIN_TEXT;
         } else {
-            return TYPE_TEXT;
+            return TYPE_TEXT_WITH_IAMGES;
         }
     }
 
-    public class ImageViewHolder extends RecyclerView.ViewHolder
-            implements View.OnClickListener {
-
-        @BindView(R.id.ll_root)
-        LinearLayout mLinearLayout;
-        //
-        @BindView(R.id.banner)
-        Banner mBanner;
-        @BindView(R.id.title_text_view)
-        TextView mTitleTextView;
-        @BindView(R.id.author_text_view)
-        TextView mAuthorTextView;
-        @BindView(R.id.time_text_view)
-        TextView mTimeTextView;
-
-        public ImageViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
-            itemView.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View v) {
-            mOnItemClickListener.onItemClick(v, getAdapterPosition());
-        }
+    public void setData(List<GankEntity> data) {
+        int positionStart = mData.size();
+        mData.addAll(data);
+        notifyItemRangeInserted(positionStart, data.size());
     }
 
-    public class TextViewHolder extends RecyclerView.ViewHolder
-            implements View.OnClickListener {
+    public void clear() {
+        int itemCount = mData.size();
+        mData.clear();
+        notifyItemRangeRemoved(0, itemCount);
+    }
+
+    public GankEntity getItem(int position) {
+        return mData.get(position);
+    }
+
+    static class TextViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         @BindView(R.id.title_text_view)
         TextView mTitle;
@@ -197,19 +147,30 @@ public class GankAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         @Override
         public void onClick(View v) {
             if (mOnItemClickListener != null) {
-                mOnItemClickListener.onItemClick(itemView, getAdapterPosition());
+                mOnItemClickListener.onItemClick(v, getAdapterPosition());
             }
         }
     }
 
-    public class FooterViewViewHolder extends RecyclerView.ViewHolder {
+    static class ImageViewHolder extends TextViewHolder {
 
-        public FooterViewViewHolder(View itemView) {
+        @BindView(R.id.image_banner)
+        Banner mBanner;
+
+        public ImageViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+        }
+    }
+
+    static class FooterViewHolder extends RecyclerView.ViewHolder {
+
+        public FooterViewHolder(View itemView) {
             super(itemView);
         }
     }
 
-    private OnItemClickListener mOnItemClickListener;
+    private static OnItemClickListener mOnItemClickListener;
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         mOnItemClickListener = onItemClickListener;
@@ -217,14 +178,5 @@ public class GankAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public interface OnItemClickListener {
         void onItemClick(View view, int position);
-
-    }
-
-    public boolean isShowFooter() {
-        return mShowFooter;
-    }
-
-    public void isShowFooter(boolean showFooter) {
-        mShowFooter = showFooter;
     }
 }

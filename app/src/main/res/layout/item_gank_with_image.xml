@@ -1,76 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout android:id="@+id/gank_item_layout"
+             xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:app="http://schemas.android.com/apk/res-auto"
-             android:id="@+id/gank_item_layout"
-             android:layout_height="wrap_content"
-             android:layout_width="match_parent">
-
-    <!--<com.facebook.drawee.view.SimpleDraweeView-->
-            <!--android:scaleType="centerCrop"-->
-            <!--android:id="@+id/android_image_view"-->
-            <!--android:adjustViewBounds="true"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="300dp"/>-->
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content">
 
     <com.youth.banner.Banner
-        android:id="@+id/banner"
-        app:image_scale_type="center_crop"
+        android:id="@+id/image_banner"
         android:layout_width="match_parent"
-        android:layout_height="300dp"></com.youth.banner.Banner>
+        android:layout_height="300dp"
+        app:image_scale_type="center_crop"
+        app:indicator_drawable_selected="@drawable/selected_indicator"
+        app:indicator_drawable_unselected="@drawable/unselected_indicator"></com.youth.banner.Banner>
 
     <LinearLayout
-            android:background="@color/item_trans_shade"
-            android:layout_gravity="bottom"
-            android:id="@+id/ll_root"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        android:id="@+id/ll_root"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/item_trans_shade"
+        android:orientation="vertical">
 
 
         <TextView
-                android:layout_marginTop="@dimen/card_margin"
-                android:layout_marginLeft="16dp"
-                android:textSize="@dimen/sn_16sp"
-                android:singleLine="true"
-                android:ellipsize="end"
-                tools:text="随着Android引进Java 8 的一些功能"
-                android:id="@+id/title_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+            android:id="@+id/title_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="@dimen/card_margin"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textSize="@dimen/sn_16sp"
+            tools:text="随着Android引进Java 8 的一些功能"/>
 
         <RelativeLayout
-                android:layout_gravity="center_vertical"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:orientation="horizontal">
 
             <TextView
-                    android:layout_marginLeft="@dimen/margin"
-                    android:layout_alignParentLeft="true"
-                    android:textColor="@android:color/darker_gray"
-                    android:id="@+id/author_text_view"
-                    tools:text="via Tony Chan"
-                    android:layout_marginBottom="@dimen/card_margin"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                android:id="@+id/author_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginBottom="@dimen/card_margin"
+                android:layout_marginLeft="@dimen/margin"
+                android:textColor="@android:color/darker_gray"
+                tools:text="via Tony Chan"/>
 
             <TextView
-                    android:layout_alignParentRight="true"
-                    android:layout_marginLeft="@dimen/margin"
-                    android:layout_marginRight="@dimen/margin"
-                    tools:text="2016-11-24"
-                    android:layout_gravity="right"
-                    android:textColor="@android:color/darker_gray"
-                    android:id="@+id/time_text_view"
-                    android:layout_marginBottom="@dimen/card_margin"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                android:id="@+id/time_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="right"
+                android:layout_marginBottom="@dimen/card_margin"
+                android:layout_marginLeft="@dimen/margin"
+                android:layout_marginRight="@dimen/margin"
+                android:textColor="@android:color/darker_gray"
+                tools:text="2016-11-24"/>
         </RelativeLayout>
-
-        <View
-                android:background="@android:color/darker_gray"
-                android:layout_width="match_parent"
-                android:layout_height="1px"/>
     </LinearLayout>
 </FrameLayout>

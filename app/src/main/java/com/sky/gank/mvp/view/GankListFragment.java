@@ -19,6 +19,8 @@ import com.sky.gank.entity.GankEntity;
 import com.sky.gank.mvp.GankAdapter;
 import com.sky.gank.mvp.presenter.IGankPresenter;
 import com.sky.gank.mvp.presenter.impl.GankPresenterImpl;
+import com.sky.gank.utils.Debugger;
+import com.sky.gank.utils.DividerItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,12 +40,12 @@ public class GankListFragment extends Fragment implements IGankView,
     RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
     private GankAdapter mAdapter;
+    private List<GankEntity> mData;
 
     private IGankPresenter mPresenter;
-    private List<GankEntity> mData = new ArrayList<>();
     private int mCount = 10;
     private int mPage = 1;
-    private String mType = GankFragment.GANK_ANDROID;
+    private String mType;
 
     public GankListFragment() {
         // Required empty public constructor
@@ -80,8 +82,9 @@ public class GankListFragment extends Fragment implements IGankView,
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.addOnScrollListener(mOnScrollListener);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
 
-        mAdapter = new GankAdapter();
+        mAdapter = new GankAdapter(getActivity());
         mAdapter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(mAdapter);
 
@@ -98,7 +101,20 @@ public class GankListFragment extends Fragment implements IGankView,
 
     @Override
     public void addGank(List<GankEntity> gankList) {
-        mAdapter.setData(gankList);
+        mAdapter.setShowFooter(true);
+        if (mData == null) {
+            mData = new ArrayList<>();
+        }
+        mData.addAll(gankList);
+        if (mPage == 1) {
+            mAdapter.setData(mData);
+        } else {
+            if (gankList == null || gankList.size() == 0) {
+                mAdapter.setShowFooter(false);
+            }
+            mAdapter.notifyDataSetChanged();
+        }
+        mPage += 1;
     }
 
     @Override
@@ -111,25 +127,29 @@ public class GankListFragment extends Fragment implements IGankView,
         mRefreshLayout.setRefreshing(false);
     }
 
+
     @Override
     public void onRefresh() {
-        if (mAdapter != null) {
-            mAdapter.clear();
+        mPage = 1;
+        if (mData != null) {
+            mData.clear();
         }
         mPresenter.loadGankList(mType, mCount, mPage);
     }
 
     @Override
     public void onItemClick(View view, int position) {
-//        if (mData.size() <= 0) {
-//            return;
-//        }
+        if (mData.size() <= 0) {
+            return;
+        }
         GankEntity gankEntity = mAdapter.getItem(position);
+
+        Debugger.d("position = " + position);
         View transitionView = view.findViewById(R.id.gank_item_layout);
         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                 getActivity(), transitionView, "share");
         ActivityCompat.startActivity(getActivity(), GankDetailActivity.newIntent(getActivity(),
-                gankEntity),
+                gankEntity.getUrl(), gankEntity.getDesc()),
                 options.toBundle());
     }
 
@@ -141,9 +161,9 @@ public class GankListFragment extends Fragment implements IGankView,
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);
             if (newState == RecyclerView.SCROLL_STATE_IDLE
-                    && lastVisibleItem + 1 == mAdapter.getItemCount()) {
+                    && lastVisibleItem + 1 == mAdapter.getItemCount()
+                    && mAdapter.isShowFooter()) {
                 //load more
-                mAdapter.setShowFooter(true);
                 mPresenter.loadGankList(mType, mCount, ++mPage);
             }
         }

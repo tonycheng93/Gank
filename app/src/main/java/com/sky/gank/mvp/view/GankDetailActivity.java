@@ -17,15 +17,14 @@ import android.widget.ViewSwitcher;
 import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.sky.gank.R;
 import com.sky.gank.base.BaseActivity;
-import com.sky.gank.entity.GankEntity;
-import com.sky.gank.utils.Debugger;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class GankDetailActivity extends BaseActivity {
 
-    public static final String EXTRA_PARAM = "gank";
+    public static final String EXTRA_URL = "url";
+    public static final String EXTRA_TITLE = "title";
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -88,17 +87,14 @@ public class GankDetailActivity extends BaseActivity {
     }
 
     private void getData() {
-        GankEntity gankEntity = (GankEntity) getIntent().getSerializableExtra(EXTRA_PARAM);
-        if (gankEntity != null) {
-            mTitle = gankEntity.getDesc();
-            mUrl = gankEntity.getUrl();
-            Debugger.d("title = " + mTitle);
-        }
+        mTitle = getIntent().getStringExtra(EXTRA_TITLE);
+        mUrl = getIntent().getStringExtra(EXTRA_URL);
     }
 
-    public static Intent newIntent(Context packageContext, GankEntity gankEntity) {
+    public static Intent newIntent(Context packageContext, String url, String title) {
         Intent intent = new Intent(packageContext, GankDetailActivity.class);
-        intent.putExtra(EXTRA_PARAM, gankEntity);
+        intent.putExtra(EXTRA_URL, url);
+        intent.putExtra(EXTRA_TITLE, title);
         return intent;
     }
 

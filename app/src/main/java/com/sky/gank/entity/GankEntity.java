@@ -3,13 +3,11 @@ package com.sky.gank.entity;
 import java.io.Serializable;
 import java.util.List;
 
-import me.drakeet.multitype.Item;
-
 /**
  * Created by tonycheng on 2016/11/24.
  */
 
-public class GankEntity implements Serializable,Item{
+public class GankEntity implements Serializable{
 
    /* {
         "error": false,

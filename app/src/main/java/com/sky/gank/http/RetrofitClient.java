@@ -30,7 +30,6 @@ public class RetrofitClient {
 
     private static volatile RetrofitClient instance = null;
 
-    private static final int DEFAULT_TIMEOUT = 5;
 
     private Retrofit mRetrofit;
     private ApiService mApiService;

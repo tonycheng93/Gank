@@ -7,4 +7,10 @@
     <string name="category_android">Android</string>
     <string name="category_ios">iOS</string>
     <string name="category_front_end">前端</string>
+
+    <string name="status_load_more">加载更多...</string>
+    <string name="status_loading">正在加载...</string>
+    <string name="status_no_more_data">没有更多数据了</string>
+
+    <string name="load_data_error">哇偶，数据加载出现问题了，请刷新！</string>
 </resources>

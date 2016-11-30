@@ -7,7 +7,7 @@
              android:layout_height="wrap_content">
 
     <com.youth.banner.Banner
-        android:id="@+id/image_banner"
+        android:id="@+id/img_banner"
         android:layout_width="match_parent"
         android:layout_height="300dp"
         app:image_scale_type="center_crop"

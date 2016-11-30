@@ -21,7 +21,7 @@ import rx.schedulers.Schedulers;
 public class GankModelImpl implements IGankModel {
 
     @Override
-    public void loadGankList(String category,int count, int page, final OnloadGankListListener listener) {
+    public void loadGankList(String category, int count, int page, final OnloadGankListListener listener) {
         ApiService apiService = RetrofitClient.getInstance().getApiService();
 
         Observable<HttpResult<List<GankEntity>>> androidList = apiService.getGankList(category, count, page);

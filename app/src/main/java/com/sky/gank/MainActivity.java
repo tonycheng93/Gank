@@ -10,7 +10,6 @@ import android.view.Menu;
 import com.sky.gank.base.BaseActivity;
 import com.sky.gank.mvp.ViewPagerAdapter;
 import com.sky.gank.mvp.view.GankListFragment;
-import com.sky.gank.utils.Debugger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +66,6 @@ public class MainActivity extends BaseActivity implements TabLayout.OnTabSelecte
 
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
-        Debugger.d(tab.getPosition() + "");
         mViewPager.setCurrentItem(tab.getPosition());
     }
 
